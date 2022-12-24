@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import HomePage from './scenes/HomePage';
+import LoginPage from './scenes/LoginPage';
+import ProfilePage from './scenes/ProfilePage';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import { themeSettings } from './theme';
+import RegisterPage from './scenes/RegisterPage';
 
-function App() {
+const App = () => {
+  const mode = useSelector((state: any) => state.mode);
+  const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+  const isAuth = Boolean(useSelector((state: any) => state.token));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routes>
+            <Route path="/register" element={!isAuth ? <RegisterPage /> : <Navigate to="/" />} />
+            <Route path="/login" element={!isAuth ? <LoginPage /> : <Navigate to="/" />} />
+            <Route path="/" element={isAuth ? <HomePage /> : <Navigate to="/login" />} />
+            <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </ThemeProvider>
+      </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;
