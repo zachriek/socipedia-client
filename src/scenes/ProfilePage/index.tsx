@@ -11,6 +11,7 @@ import useUser from '../../hooks/useUser';
 
 const ProfilePage = () => {
   const { userId } = useParams();
+  const { _id } = useSelector((state: any) => state.user);
   const token = useSelector((state: any) => state.token);
   const { user, isLoading } = useUser(userId, token);
   const navigate = useNavigate();
@@ -33,8 +34,12 @@ const ProfilePage = () => {
             <FriendListWidget userId={userId} />
           </Box>
           <Box flexBasis={isNonMobileScreens ? '42%' : undefined} mt={isNonMobileScreens ? undefined : '2rem'}>
-            <MyPostWidget picturePath={user.picturePath} />
-            <Box m="2rem 0" />
+            {userId === _id ? (
+              <>
+                <MyPostWidget picturePath={user.picturePath} />
+                <Box m="2rem 0" />
+              </>
+            ) : null}
             <UserPostsWidget userId={userId} />
           </Box>
         </Box>
